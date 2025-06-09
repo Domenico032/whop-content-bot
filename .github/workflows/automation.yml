@@ -33,4 +33,4 @@ jobs:
           WHOP_URL: ${{ secrets.WHOP_URL }}
 
       - name: 🚀 Avvia lo script principale
-        run: python script/run_all.py
+        run: python scripts/run_all.py
