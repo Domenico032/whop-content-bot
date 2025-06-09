@@ -1,47 +1,36 @@
-name: Whop Content Bot
+name: 🤖 Whop Content Bot Automation
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 2,8,14,20 * * *'  # ogni giorno alle 02:00, 08:00, 14:00, 20:00 UTC
-  workflow_dispatch:  # per eseguirlo anche a mano
 
 jobs:
-  whop_bot:
+  run-bot:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: ⬇️ Clona il repository
+        uses: actions/checkout@v3
 
-      - name: Setup Python
+      - name: 🐍 Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
+          python-version: '3.10'
 
-      - name: Install Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
-
-      - name: Setup ChromeDriver
-        uses: nanasess/setup-chromedriver@v1
-        with:
-          chromedriver-version: 'match'
-
-      - name: Start Xvfb
-        run: |
-          sudo Xvfb :99 -ac &
-          echo "DISPLAY=:99" >> $GITHUB_ENV
-
-      - name: Install dependencies
+      - name: 📦 Installa dipendenze
         run: pip install -r requirements.txt
 
-      - name: Setup Config
+      - name: 🔐 Scrivi i file di configurazione dai secrets
         run: |
           mkdir -p config
-          echo "${{ secrets.SERVICE_ACCOUNT_JSON }}" > config/service_account.json
-          echo "${{ secrets.INSTAGRAM_COOKIES_JSON }}" > config/INSTAGRAM_COOKIES.json
+          echo "$SERVICE_ACCOUNT_JSON" > config/service_account.json
+          echo "$INSTAGRAM_COOKIES_JSON" > config/INSTAGRAM_COOKIES.json
+          echo "$WHOP_URL" > config/WHOP_URL.txt
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          INSTAGRAM_COOKIES_JSON: ${{ secrets.INSTAGRAM_COOKIES_JSON }}
+          WHOP_URL: ${{ secrets.WHOP_URL }}
 
-      - name: Run all scripts
-        run: python scripts/run_all.py
+      - name: 🚀 Avvia lo script principale
+        run: python script/run_all.py
