@@ -24,6 +24,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Avvia lo script principale
-        run: python scripts/run_all.py
+      - name: Run All Script
+        run: python ./scripts/run_all.py
 
