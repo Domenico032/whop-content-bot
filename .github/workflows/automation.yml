@@ -1,36 +1,29 @@
-name: 🤖 Whop Content Bot Automation
+name: Whop Content Bot
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '0 2,8,14,20 * * *'  # ogni giorno alle 02:00, 08:00, 14:00, 20:00 UTC
+    - cron: "0 2,8,14,20 * * *"  # Esegue ogni giorno alle 02:00, 08:00, 14:00, 20:00 UTC
+  workflow_dispatch:            # Permette esecuzione manuale dal sito GitHub
 
 jobs:
-  run-bot:
-    runs-on: ubuntu-latest
+  run-script:
+    runs-on: windows-latest
 
     steps:
-      - name: ⬇️ Clona il repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: 🐍 Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: 📦 Installa dipendenze
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+
+      - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: 🔐 Scrivi i file di configurazione dai secrets
-        run: |
-          mkdir -p config
-          echo "$SERVICE_ACCOUNT_JSON" > config/service_account.json
-          echo "$INSTAGRAM_COOKIES_JSON" > config/INSTAGRAM_COOKIES.json
-          echo "$WHOP_URL" > config/WHOP_URL.txt
-        env:
-          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-          INSTAGRAM_COOKIES_JSON: ${{ secrets.INSTAGRAM_COOKIES_JSON }}
-          WHOP_URL: ${{ secrets.WHOP_URL }}
-
-      - name: 🚀 Avvia lo script principale
+      - name: Avvia lo script principale
         run: python scripts/run_all.py
+
