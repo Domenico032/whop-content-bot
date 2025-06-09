@@ -4,7 +4,7 @@ import os
 # Add 'scripts' to the Python path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'scripts'))
 
-from download_from_drive import step1
+from download_from_drive import download_latest_video as step1
 from post_to_instagram import step2
 from submit_to_whop import step3
 
