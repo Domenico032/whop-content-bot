@@ -1,6 +1,6 @@
-from script import 1_download_from_drive as step1
-from script import 2_post_to_instagram as step2
-from script import 3_submit_to_whop as step3
+from script import download1_from_drive as step1
+from script import post2_to_instagram as step2
+from script import submit3_to_whop as step3
 import os
 
 def main():
