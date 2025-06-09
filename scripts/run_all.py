@@ -1,6 +1,6 @@
-from scripts import step1_download_from_drive as step1
-from scripts import step2_post_to_instagram as step2
-from scripts import step3_submit_to_whop as step3
+from scripts import download_from_drive as step1
+from scripts import post_to_instagram as step2
+from scripts import submit_to_whop as step3
 
 if __name__ == "__main__":
     print("🚀 Avvio processo automatico Whop Content Bot...")
