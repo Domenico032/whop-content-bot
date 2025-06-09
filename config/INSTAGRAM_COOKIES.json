@@ -1,0 +1,32 @@
+[
+  {
+    "domain": ".instagram.com",
+    "expiry": 1783976472,
+    "httpOnly": true,
+    "name": "mid",
+    "path": "/",
+    "sameSite": "None",
+    "secure": true,
+    "value": "aEX6FQALAAGY972Gge3amryb_-1c"
+  },
+  {
+    "domain": ".instagram.com",
+    "expiry": 1780952472,
+    "httpOnly": true,
+    "name": "ig_did",
+    "path": "/",
+    "sameSite": "None",
+    "secure": true,
+    "value": "0BF8BCBA-C64C-49A9-A131-C9E328EB5AA3"
+  },
+  {
+    "domain": ".instagram.com",
+    "expiry": 1783976472,
+    "httpOnly": true,
+    "name": "datr",
+    "path": "/",
+    "sameSite": "None",
+    "secure": true,
+    "value": "FPpFaEpUfsMnNx4cppLmkCeX"
+  }
+]
