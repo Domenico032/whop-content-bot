@@ -1,83 +1,40 @@
-import os
-import time
+import os, time
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-# --- Configurazioni ---
-WHOP_LOGIN_URL    = "https://whop.com/login"
-WHOP_CONTENT_URL  = "https://whop.com/content-rewards"
-LAST_POST_FILE    = os.path.join(os.path.dirname(os.path.dirname(__file__)), "last_post.txt")
+VIDEO_FOLDER = "videos/queue"
+WHOP_URL_FILE = "config/WHOP_URL.txt"
 
-# CSS selector (raw string) per i pulsanti e campi di Whop
-BTN_INVIA_CANDIDATURA = r"#campaign-detail-container > div.border-stroke.bg-background.absolute.right-0.bottom-0.left-0.flex.items-center.justify-between.gap-2.border-t.p-4 > div.w-full.max-w-\[50\%\].sm\:max-w-52 > button"
-BTN_UPLOAD_FILE       = r"#radix-«ru» > form > div.flex.w-full.flex-1.flex-col.gap-4.overflow-y-auto.p-4.pt-2.sm\:pt-4 > div:nth-child(4) > div > button"
-INPUT_REEL_LINK       = r"#radix-«ru» > form > div.flex.w-full.flex-col.gap-1 > div > input"
-BTN_SUBMIT            = r"#radix-«ru» > form > div.border-stroke.bg-panel-solid.sticky.right-0.bottom-0.left-0.flex.w-full.gap-2.border-t.p-4 > button"
+def submit_to_whop(video_path, reel_url):
+    url = open(WHOP_URL_FILE).read().strip()
 
-def whop_login(driver):
-    """
-    Effettua il login a Whop. Attende l'inserimento manuale dell'OTP.
-    """
-    driver.get(WHOP_LOGIN_URL)
-    print("➤ Inserisci username/password e OTP su Whop nella finestra aperta.")
-    # Attendi 60 secondi per completare il login + OTP
-    time.sleep(60)
+    options = Options()
+    options.add_argument("--headless=new")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
+    driver = webdriver.Chrome(options=options)
 
-def submit_to_whop(driver, video_path, reel_url):
-    """
-    Carica il video e il link del reel nella sezione 'Invia candidatura'.
-    """
-    driver.get(WHOP_CONTENT_URL)
-    time.sleep(5)
-
-    # 1) Clicca "Invia candidatura"
-    driver.find_element(By.CSS_SELECTOR, BTN_INVIA_CANDIDATURA).click()
-    time.sleep(2)
-
-    # 2) Carica il file video (.send_keys sul <input type="file">)
-    upload_btn = driver.find_element(By.CSS_SELECTOR, BTN_UPLOAD_FILE)
-    upload_btn.send_keys(video_path)
-    time.sleep(2)
-
-    # 3) Inserisci il link del reel
-    reel_input = driver.find_element(By.CSS_SELECTOR, INPUT_REEL_LINK)
-    reel_input.send_keys(reel_url)
-    time.sleep(1)
-
-    # 4) Clicca "Submit"
-    driver.find_element(By.CSS_SELECTOR, BTN_SUBMIT).click()
-    time.sleep(3)
-    print("✅ Candidatura Whop inviata con successo.")
-
-def main():
-    # Leggi ultimo video + link postato
-    if not os.path.exists(LAST_POST_FILE):
-        print(f"Errore: file {LAST_POST_FILE} non trovato. Esegui prima lo script Instagram.")
-        return
-
-    with open(LAST_POST_FILE, "r") as f:
-        content = f.read().strip()
     try:
-        video_file, reel_link = content.split("|", 1)
-    except ValueError:
-        print("Errore nel formato di last_post.txt; atteso 'file.mp4|https://...'.")
-        return
+        driver.get(url)
+        time.sleep(5)
 
-    # Percorso assoluto del video
-    project_root = os.path.dirname(os.path.dirname(__file__))
-    video_path = os.path.join(project_root, "videos", "posted", video_file)
+        file_input = driver.find_element(By.XPATH, '//input[@type="file"]')
+        file_input.send_keys(os.path.abspath(video_path))
+        print("📎 Video allegato.")
 
-    if not os.path.exists(video_path):
-        print(f"Errore: video {video_path} non trovato.")
-        return
+        link_input = driver.find_element(By.XPATH, '//input[@type="url" or @type="text"]')
+        link_input.send_keys(reel_url)
+        print("🔗 Link incollato.")
 
-    # Avvia browser
-    driver = webdriver.Chrome()
-    try:
-        whop_login(driver)
-        submit_to_whop(driver, video_path, reel_link)
+        submit_btn = driver.find_element(By.XPATH, '//button[contains(text(), "Invia") or contains(text(), "Submit")]')
+        submit_btn.click()
+        print("✅ Inviato a Whop.")
+    except Exception as e:
+        print(f"❌ Errore durante invio a Whop: {e}")
     finally:
         driver.quit()
 
 if __name__ == "__main__":
-    main()
+    file = os.listdir(VIDEO_FOLDER)[0]
+    submit_to_whop(os.path.join(VIDEO_FOLDER, file), "https://instagram.com/...")

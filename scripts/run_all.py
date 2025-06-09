@@ -1,10 +1,24 @@
-import subprocess
+from script import 1_download_from_drive as step1
+from script import 2_post_to_instagram as step2
+from script import 3_submit_to_whop as step3
+import os
 
-print("Eseguo: Scaricamento da Google Drive")
-subprocess.run(["python", "scripts/1_download_from_drive.py"], check=True)
+def main():
+    print("🚀 Avvio Whop Content Bot...")
+    os.makedirs("videos/queue", exist_ok=True)
 
-print("Eseguo: Pubblicazione su Instagram")
-subprocess.run(["python", "scripts/2_post_to_instagram.py"], check=True)
+    video = step1.download_latest_video()
+    if not video:
+        print("⛔ Nessun video da usare. Fine.")
+        return
 
-print("Eseguo: Invio su Whop")
-subprocess.run(["python", "scripts/3_submit_to_whop.py"], check=True)
+    reel_link = step2.upload_to_instagram(video)
+    if not reel_link:
+        print("⛔ Errore nel caricamento Reel.")
+        return
+
+    step3.submit_to_whop(video, reel_link)
+    print("✅ Tutto completato con successo.")
+
+if __name__ == "__main__":
+    main()
