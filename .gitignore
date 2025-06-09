@@ -1,16 +1,4 @@
-# Ignora tutti i file di configurazione sensibili
-config/*.json
-
-# Ignora file temporanei o generati
-__pycache__/
-*.pyc
-*.pyo
-
-# Ignora log o backup
-*.log
-*.bak
-
-# Ignora cartelle di sistema
-.vscode/
-.DS_Store
-Thumbs.db
+# Escludi credenziali sensibili
+config/drive_creds.json
+config/service_account.json
+config/INSTAGRAM_COOKIES.json
